@@ -8,6 +8,11 @@
 </head>
 <body>
 
+    <aside class="crisis-bar">
+        <span>⚠️ In an acute emotional crisis?</span>
+        <button id="open-crisis-btn" class="crisis-link" type="button">Access immediate 24/7 emergency hotlines</button>
+    </aside>
+
     <main class="container">
         <header class="header-section">
             <h1 class="brand-title">
@@ -28,6 +33,40 @@
             </button>
         </section>
     </main>
+
+    <!-- Crisis Support Modal -->
+    <div id="crisis-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="crisis-title">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 id="crisis-title" class="modal-title">🆘 24/7 Immediate Help</h2>
+                <button id="close-crisis-btn" class="modal-close-btn" type="button" aria-label="Close modal">&times;</button>
+            </div>
+            <p class="modal-intro">If you or someone you know is in immediate danger or having suicidal thoughts, please reach out to dedicated human lifelines:</p>
+            
+            <div class="crisis-list">
+                <div class="crisis-item">
+                    <div class="crisis-item-title">🇮🇳 India - Tele-MANAS (Govt. Helpline)</div>
+                    <div class="crisis-item-contact">Call: <strong>14416</strong> or <strong>1800-891-4416</strong> (24x7, Toll-Free)</div>
+                </div>
+                <div class="crisis-item">
+                    <div class="crisis-item-title">🇮🇳 India - Vandrevala Foundation / AASRA</div>
+                    <div class="crisis-item-contact">Call: <strong>+91 9999 666 555</strong> / <strong>+91 98204 66726</strong></div>
+                </div>
+                <div class="crisis-item">
+                    <div class="crisis-item-title">🇺🇸 US & 🇨🇦 Canada - Suicide & Crisis Lifeline</div>
+                    <div class="crisis-item-contact">Call or Text: <strong>988</strong> (Available 24/7)</div>
+                </div>
+                <div class="crisis-item">
+                    <div class="crisis-item-title">🇬🇧 UK - NHS & Samaritans</div>
+                    <div class="crisis-item-contact">Call: <strong>111</strong> (NHS) or <strong>116 123</strong> (Samaritans)</div>
+                </div>
+                <div class="crisis-item">
+                    <div class="crisis-item-title">🌍 International Resources</div>
+                    <div class="crisis-item-contact">Visit: <a href="https://findahelpline.com" target="_blank" rel="noopener" style="color: #38bdf8;">findahelpline.com</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

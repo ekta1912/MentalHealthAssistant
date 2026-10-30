@@ -17,6 +17,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const startBtn = document.getElementById('start-btn');
     const chatDisplay = document.getElementById('chat-display');
+    const crisisModal = document.getElementById('crisis-modal');
+    const openCrisisBtn = document.getElementById('open-crisis-btn');
+    const closeCrisisBtn = document.getElementById('close-crisis-btn');
+
+    function toggleCrisisModal(show) {
+        if (!crisisModal) return;
+        if (show) {
+            crisisModal.classList.add('active');
+        } else {
+            crisisModal.classList.remove('active');
+        }
+    }
+
+    if (openCrisisBtn) openCrisisBtn.addEventListener('click', () => toggleCrisisModal(true));
+    if (closeCrisisBtn) closeCrisisBtn.addEventListener('click', () => toggleCrisisModal(false));
+    if (crisisModal) {
+        crisisModal.addEventListener('click', (e) => {
+            if (e.target === crisisModal) toggleCrisisModal(false);
+        });
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') toggleCrisisModal(false);
+    });
 
     function loadVoices() {
         synthVoices = window.speechSynthesis.getVoices();
