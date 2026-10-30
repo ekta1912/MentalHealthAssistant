@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const textChatForm = document.getElementById('text-chat-form');
     const textInput = document.getElementById('text-input');
     const sendBtn = document.getElementById('send-btn');
+    const clearChatBtn = document.getElementById('clear-chat-btn');
 
     function toggleCrisisModal(show) {
         if (!crisisModal) return;
@@ -176,6 +177,22 @@ document.addEventListener("DOMContentLoaded", () => {
             if (textInput) {
                 textInput.disabled = false;
                 textInput.focus();
+            }
+            if (sendBtn) sendBtn.disabled = false;
+        });
+    }
+
+    if (clearChatBtn) {
+        clearChatBtn.addEventListener('click', () => {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            chatHistory = [];
+            chatDisplay.innerHTML = `<div class="chat-welcome">Take a deep, gentle breath. I'm here to listen whenever you're ready.</div>`;
+            resetUI();
+            if (textInput) {
+                textInput.value = '';
+                textInput.disabled = false;
             }
             if (sendBtn) sendBtn.disabled = false;
         });
