@@ -31,6 +31,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const textInput = document.getElementById('text-input');
     const sendBtn = document.getElementById('send-btn');
     const clearChatBtn = document.getElementById('clear-chat-btn');
+    const soundwave = document.getElementById('soundwave');
+    const toggleSoundBtn = document.getElementById('toggle-sound-btn');
+    const soundIcon = document.getElementById('sound-icon');
+    const soundStatusText = document.getElementById('sound-status-text');
+    let isVoiceMuted = false;
+
+    function setSoundwave(active) {
+        if (!soundwave) return;
+        if (active) soundwave.classList.add('active');
+        else soundwave.classList.remove('active');
+    }
+
+    if (toggleSoundBtn) {
+        toggleSoundBtn.addEventListener('click', () => {
+            isVoiceMuted = !isVoiceMuted;
+            if (isVoiceMuted) {
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+                if (soundIcon) soundIcon.innerText = '🔇';
+                if (soundStatusText) soundStatusText.innerText = 'Voice Audio: OFF';
+                setSoundwave(false);
+            } else {
+                if (soundIcon) soundIcon.innerText = '🔊';
+                if (soundStatusText) soundStatusText.innerText = 'Voice Audio: ON';
+            }
+        });
+    }
 
     function toggleCrisisModal(show) {
         if (!crisisModal) return;
@@ -146,6 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     window.speechSynthesis.cancel();
                 }
                 r.start();
+                setSoundwave(true);
                 startBtn.innerText = "Listening deeply...";
                 startBtn.classList.add('listening-pulse');
                 startBtn.disabled = true;
@@ -232,6 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const transcript = event.results[0][0].transcript;
         chatDisplay.innerHTML += `<br><br><b>You:</b> "${transcript}"`;
         startBtn.innerText = "Processing...";
+        setSoundwave(false);
         startBtn.classList.remove('listening-pulse');
         startBtn.disabled = true;
         
@@ -296,7 +324,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function speak(text) {
-        if (!('speechSynthesis' in window)) return resetUI();
+        if (!('speechSynthesis' in window) || isVoiceMuted) return resetUI();
+        setSoundwave(true);
 
         // Clear any previous or stalled utterances to prevent audio playback freezing in Chrome/Edge
         window.speechSynthesis.cancel();
@@ -350,6 +379,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function resetUI() {
+        setSoundwave(false);
         if(startBtn) {
             startBtn.innerText = "Speak to Samaira";
             startBtn.classList.remove('listening-pulse');
