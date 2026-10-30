@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 r.start();
                 startBtn.innerText = "Listening deeply...";
-                startBtn.style.backgroundColor = "#2E86AB"; // Calming blue
+                startBtn.classList.add('listening-pulse');
                 startBtn.disabled = true;
             } catch(e) {
                 console.error(e);
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const transcript = event.results[0][0].transcript;
         chatDisplay.innerHTML += `<br><br><b>You:</b> "${transcript}"`;
         startBtn.innerText = "Processing...";
-        startBtn.style.backgroundColor = "#4A90E2";
+        startBtn.classList.remove('listening-pulse');
         startBtn.disabled = true;
         
         await callGemini(transcript);
@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function resetUI() {
         if(startBtn) {
             startBtn.innerText = "Speak to Samaira";
-            startBtn.style.backgroundColor = "#4A90E2"; // Soothing blue
+            startBtn.classList.remove('listening-pulse');
             startBtn.disabled = false;
         }
     }

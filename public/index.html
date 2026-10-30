@@ -3,74 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samaira - Wellness & Harmony</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0F172A; /* Deep grounding night sky color */
-            color: #E2E8F0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-        }
-        .container {
-            max-width: 650px;
-            padding: 30px;
-            background-color: rgba(30, 41, 59, 0.7);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-        h1 {
-            color: #38BDF8; /* Calming sky blue */
-            font-weight: 300;
-            letter-spacing: 1px;
-        }
-        #chat-display {
-            font-size: 19px;
-            min-height: 100px;
-            margin-bottom: 30px;
-            color: #94A3B8;
-            font-weight: 300;
-            line-height: 1.5;
-        }
-        #start-btn {
-            padding: 16px 45px;
-            font-size: 18px;
-            font-weight: 500;
-            cursor: pointer;
-            background-color: #4A90E2; /* Therapeutic blue */
-            color: white;
-            border: none;
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
-            transition: all 0.4s ease;
-            letter-spacing: 0.5px;
-        }
-        #start-btn:disabled {
-            background-color: #334155;
-            cursor: not-allowed;
-            box-shadow: none;
-            color: #94A3B8;
-        }
-        #start-btn:hover:not(:disabled) {
-            background-color: #357ABD;
-        }
-        #start-btn:active:not(:disabled) {
-            transform: scale(0.97);
-        }
-    </style>
+    <title>Samaira - AI Mental Health & Wellness Companion</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="container">
-        <h1>🌿 Samaira</h1>
-        <div id="chat-display">Take a deep breath. I'm here for you whenever you are ready.</div>
-        <button id="start-btn">Speak to Samaira</button>
-    </div>
+    <main class="container">
+        <header class="header-section">
+            <h1 class="brand-title">
+                <span class="brand-icon">🌿</span>
+                <span>Samaira</span>
+            </h1>
+            <p class="brand-subtitle">Empathetic Voice & Mindful AI Companion</p>
+        </header>
+
+        <section id="chat-display">
+            <div class="chat-welcome">Take a deep, gentle breath. I'm here to listen whenever you're ready.</div>
+        </section>
+
+        <section class="controls-section">
+            <button id="start-btn" type="button">
+                <span>🎙️</span>
+                <span id="btn-text">Speak to Samaira</span>
+            </button>
+        </section>
+    </main>
 
     <script src="script.js"></script>
 </body>
