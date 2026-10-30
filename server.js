@@ -16,18 +16,31 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Health check endpoint for system monitoring
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: "healthy",
+        app: "Samaira Mental Health Coach",
+        uptime: Math.floor(process.uptime()),
+        model: "gemini-2.5-flash",
+        timestamp: new Date().toISOString()
+    });
+});
+
 app.post('/api/chat', async (req, res) => {
     try {
         const { chatHistory } = req.body;
         const API_KEY = process.env.API_KEY;
 
-        // Agar .env me API key nahi mili
-        if (!API_KEY || API_KEY.includes('hehe')) {
+        if (!API_KEY || API_KEY.includes('your_gemini_api_key')) {
             console.error("❌ ERROR: Invalid or missing API Key in .env file!");
-            return res.status(500).json({ error: "Invalid API Key" });
+            return res.status(500).json({ error: "Invalid or unconfigured Gemini API Key." });
         }
 
-        // FIXED: 'systemInstruction' (camelCase is required by Google)
+        if (!chatHistory || !Array.isArray(chatHistory) || chatHistory.length === 0) {
+            return res.status(400).json({ error: "Invalid payload: chatHistory must be a non-empty array." });
+        }
+
         const body = {
             systemInstruction: {
                 "parts": [
@@ -53,10 +66,15 @@ app.post('/api/chat', async (req, res) => {
         });
 
         if (!response.ok) {
-            // Yeh aapko terminal me exact error batayega jo Google ne bheja hai
             const errorDetails = await response.text();
             console.error("❌ Google API Error Details:", errorDetails);
-            throw new Error(`Google API responded with status: ${response.status}`);
+            
+            if (response.status === 429) {
+                return res.status(429).json({ error: "Samaira is experiencing high volume. Please take a breath and try again shortly." });
+            }
+            return res.status(response.status >= 500 ? 502 : response.status).json({
+                error: `AI gateway returned error code ${response.status}`
+            });
         }
 
         const result = await response.json();
@@ -75,8 +93,8 @@ app.post('/api/chat', async (req, res) => {
         res.json({ reply: reply });
 
     } catch (error) {
-        console.error("❌ Server Crash Error:", error.message);
-        res.status(500).json({ error: "Failed to connect to Samaira's brain." });
+        console.error("❌ Server Error:", error.message);
+        res.status(500).json({ error: "Failed to connect to Samaira's brain. Please verify server connection." });
     }
 });
 
