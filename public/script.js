@@ -20,6 +20,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const crisisModal = document.getElementById('crisis-modal');
     const openCrisisBtn = document.getElementById('open-crisis-btn');
     const closeCrisisBtn = document.getElementById('close-crisis-btn');
+    const breathingModal = document.getElementById('breathing-modal');
+    const openBreathingBtn = document.getElementById('open-breathing-btn');
+    const closeBreathingBtn = document.getElementById('close-breathing-btn');
+    const breathingCircle = document.getElementById('breathing-circle');
+    const breathingInstruction = document.getElementById('breathing-instruction');
+    const breathingTimer = document.getElementById('breathing-timer');
+    const toggleBreathingCycle = document.getElementById('toggle-breathing-cycle');
     const textChatForm = document.getElementById('text-chat-form');
     const textInput = document.getElementById('text-input');
     const sendBtn = document.getElementById('send-btn');
@@ -41,8 +48,86 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') toggleCrisisModal(false);
+        if (e.key === 'Escape') {
+            toggleCrisisModal(false);
+            toggleBreathingModal(false);
+        }
     });
+
+    let breathingInterval = null;
+    let isBreathingActive = false;
+
+    function toggleBreathingModal(show) {
+        if (!breathingModal) return;
+        if (show) {
+            breathingModal.classList.add('active');
+        } else {
+            breathingModal.classList.remove('active');
+            stopBreathingCycle();
+        }
+    }
+
+    function stopBreathingCycle() {
+        isBreathingActive = false;
+        clearInterval(breathingInterval);
+        if (breathingCircle) {
+            breathingCircle.className = 'breathing-circle';
+        }
+        if (breathingInstruction) breathingInstruction.innerText = 'Ready to begin';
+        if (breathingTimer) breathingTimer.innerText = 'Press Start to synchronize';
+        if (toggleBreathingCycle) toggleBreathingCycle.innerText = 'Start Exercise';
+    }
+
+    function runBreathingCycle() {
+        const phases = [
+            { name: 'Inhale gently through nose...', class: 'inhale', seconds: 4 },
+            { name: 'Hold your breath calmly...', class: 'hold', seconds: 7 },
+            { name: 'Exhale completely through mouth...', class: 'exhale', seconds: 8 }
+        ];
+
+        let phaseIndex = 0;
+        let count = phases[0].seconds;
+
+        function setPhase() {
+            const current = phases[phaseIndex];
+            if (breathingCircle) breathingCircle.className = `breathing-circle ${current.class}`;
+            if (breathingInstruction) breathingInstruction.innerText = current.name;
+            if (breathingTimer) breathingTimer.innerText = `${count}s`;
+        }
+
+        setPhase();
+
+        breathingInterval = setInterval(() => {
+            count--;
+            if (count > 0) {
+                if (breathingTimer) breathingTimer.innerText = `${count}s`;
+            } else {
+                phaseIndex = (phaseIndex + 1) % phases.length;
+                count = phases[phaseIndex].seconds;
+                setPhase();
+            }
+        }, 1000);
+    }
+
+    if (openBreathingBtn) openBreathingBtn.addEventListener('click', () => toggleBreathingModal(true));
+    if (closeBreathingBtn) closeBreathingBtn.addEventListener('click', () => toggleBreathingModal(false));
+    if (breathingModal) {
+        breathingModal.addEventListener('click', (e) => {
+            if (e.target === breathingModal) toggleBreathingModal(false);
+        });
+    }
+
+    if (toggleBreathingCycle) {
+        toggleBreathingCycle.addEventListener('click', () => {
+            if (isBreathingActive) {
+                stopBreathingCycle();
+            } else {
+                isBreathingActive = true;
+                toggleBreathingCycle.innerText = 'Stop Exercise';
+                runBreathingCycle();
+            }
+        });
+    }
 
     function loadVoices() {
         synthVoices = window.speechSynthesis.getVoices();
