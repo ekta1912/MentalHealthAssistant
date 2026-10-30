@@ -20,6 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const crisisModal = document.getElementById('crisis-modal');
     const openCrisisBtn = document.getElementById('open-crisis-btn');
     const closeCrisisBtn = document.getElementById('close-crisis-btn');
+    const textChatForm = document.getElementById('text-chat-form');
+    const textInput = document.getElementById('text-input');
+    const sendBtn = document.getElementById('send-btn');
 
     function toggleCrisisModal(show) {
         if (!crisisModal) return;
@@ -64,6 +67,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error(e);
                 resetUI();
             }
+        });
+    }
+
+    if (textChatForm) {
+        textChatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = textInput ? textInput.value.trim() : '';
+            if (!text) return;
+
+            if (textInput) {
+                textInput.value = '';
+                textInput.disabled = true;
+            }
+            if (sendBtn) sendBtn.disabled = true;
+            if (startBtn) startBtn.disabled = true;
+
+            chatDisplay.innerHTML += `<br><br><b>You:</b> "${text}"`;
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
+
+            await callGemini(text);
+
+            if (textInput) {
+                textInput.disabled = false;
+                textInput.focus();
+            }
+            if (sendBtn) sendBtn.disabled = false;
         });
     }
 
@@ -113,6 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const samairaReply = data.reply;
             
             chatDisplay.innerHTML += `<br><br><b>Samaira:</b> <i>"${samairaReply}"</i>`;
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
 
             chatHistory.push({
                 "role": "model",
