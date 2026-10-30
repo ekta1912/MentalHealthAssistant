@@ -1,24 +1,66 @@
 # 🌿 Samaira - AI Mental Health & Wellness Companion
 
-Samaira is an empathetic, voice-interactive AI mental health companion designed to provide supportive, grounded, and therapeutic conversations. Built with Node.js, Express, the Web Speech API, and Google's Gemini Flash model, Samaira combines cognitive reframing techniques (CBT, DBT, and somatic grounding) with real-time speech recognition and therapeutic vocal delivery.
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](LICENSE)
+[![Node.js](https://img.shields.io/badge/Node.js-v18%2B-green.svg)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-5.x-lightgrey.svg)](https://expressjs.com/)
+[![Gemini](https://img.shields.io/badge/Google%20Gemini-2.5%20Flash-orange.svg)](https://aistudio.google.com/)
+
+**Samaira** is an empathetic, voice-interactive AI mental health companion designed to provide supportive, grounded, and mindful therapeutic conversations. Built with Node.js, Express, the Web Speech API, and Google's Gemini Flash model, Samaira combines cognitive reframing techniques (CBT, DBT, and somatic grounding) with real-time speech recognition, soothing vocal delivery, and interactive nervous-system regulation exercises.
 
 ---
 
-## ✨ Features
+## ✨ Features & Capabilities
 
-- **🎙️ Voice-First Interaction**: Hands-free voice recognition using the Web Speech API (`SpeechRecognition`).
-- **🗣️ Calibrated Therapeutic Speech**: Custom text-to-speech engine fine-tuned for calming pitch and pacing (`speechSynthesis`).
-- **🧠 Grounded Psychology Framework**: Backed by system instructions tailored around CBT, DBT, and nervous system regulation.
-- **🛡️ Built-in Safety Boundaries**: Configured to recognize crisis and actively guide users toward professional healthcare resources.
-- **⚡ Lightweight & Fast**: Vanilla JavaScript frontend with an Express.js backend serving as a secure API proxy.
+- **🎙️ Dual-Mode Communication**: 
+  - **Voice-First**: Natural hands-free conversation with browser Speech Recognition.
+  - **Text Fallback**: Quiet environment mode with instant text messaging input.
+- **🗣️ Calibrated Therapeutic Voice**:
+  - Natural speech synthesis calibrated with calming pitch and measured pacing.
+  - One-click privacy voice mute toggle (`Voice Audio: ON/OFF`).
+- **🫁 4-7-8 Somatic Breathing Exercise**:
+  - Built-in guided breathing guide with expanding and contracting visual feedback to down-regulate acute anxiety.
+- **🌱 Mood Starter Chips**:
+  - Rapid conversation starters for racing thoughts, insomnia, emotional exhaustion, and venting.
+- **🌊 Dynamic Soundwave Visualizer**:
+  - Real-time animated audio wave bars reflecting active listening and speaking states.
+- **🔄 Session Management**:
+  - Instant conversation reset to start a fresh, confidential reflection anytime.
+- **🛡️ Immediate Crisis Support Integration**:
+  - Prominent emergency lifeline access for 24/7 suicide prevention and psychological crisis assistance.
+- **🏥 System Health Endpoint**:
+  - Dedicated `/api/health` monitoring route providing uptime, model details, and status.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Architecture & Tech Stack
 
-- **Backend**: Node.js, Express 5, CORS, Dotenv
-- **AI Brain**: Google Gemini 2.5 Flash API
-- **Frontend**: HTML5, Vanilla CSS, Web Speech API (SpeechRecognition & SpeechSynthesis)
+```text
+┌────────────────────────────────────────────────────────┐
+│                   Client (Browser)                     │
+│  ┌───────────────────────┐   ┌──────────────────────┐  │
+│  │ Web Speech Recognition│   │ Web Speech Synthesis │  │
+│  └───────────┬───────────┘   └──────────▲───────────┘  │
+│              │                          │              │
+│              ▼                          │              │
+│     [Voice / Text Input]       [Spoken Response]       │
+└──────────────┬──────────────────────────┴──────────────┘
+               │                          ▲
+          HTTP POST                  HTTP Response
+               │                          │
+┌──────────────▼──────────────────────────┴──────────────┐
+│                Express.js Server (Port 3000)           │
+│  - /api/chat   : Context-managed proxy & safety filter │
+│  - /api/health : Server uptime & diagnostics           │
+└──────────────┬──────────────────────────▲──────────────┘
+               │                          │
+          Secure REST API            Candidate Text
+               │                          │
+┌──────────────▼──────────────────────────┴──────────────┐
+│           Google Gemini 2.5 Flash Engine               │
+│  - Evidence-based CBT/DBT System Prompt                │
+│  - Zero-latency voice thinking budget configuration    │
+└────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -29,66 +71,98 @@ Samaira is an empathetic, voice-interactive AI mental health companion designed 
 - [Node.js](https://nodejs.org/) (v18 or higher recommended)
 - A [Google Gemini API Key](https://aistudio.google.com/app/apikey)
 
-### Installation
+### Quick Installation
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/<your-username>/<your-repo-name>.git
-   cd MentalCoach
+   git clone https://github.com/ekta1912/MentalHealthAssistant.git
+   cd MentalHealthAssistant
    ```
 
-2. **Install dependencies:**
+2. **Install project dependencies:**
    ```bash
    npm install
    ```
 
 3. **Configure Environment Variables:**
-   Create a `.env` file in the root directory (or copy from `.env.example`):
+   Copy the `.env.example` file to `.env`:
    ```bash
    cp .env.example .env
    ```
-   Add your Gemini API Key in `.env`:
+   Add your Gemini API key in `.env`:
    ```env
-   API_KEY=your_actual_gemini_api_key_here
+   API_KEY=your_gemini_api_key_here
    PORT=3000
    ```
 
-4. **Start the application:**
+4. **Run the server:**
    ```bash
    npm start
    ```
-   Or for development with auto-reload:
+   Or run in hot-reload development mode:
    ```bash
    npm run dev
    ```
 
 5. **Open in Browser:**
-   Navigate to [http://localhost:3000](http://localhost:3000) (Google Chrome or Microsoft Edge recommended for full Speech API support).
+   Navigate to [http://localhost:3000](http://localhost:3000) (Google Chrome or Microsoft Edge recommended for optimal Speech API support).
 
 ---
 
-## 📁 Project Structure
+## 📡 API Reference
 
-```text
-├── public/
-│   ├── index.html       # Client interface with calming aesthetic
-│   └── script.js        # Voice recognition, TTS, and chat handling
-├── .env.example         # Environment template
-├── .gitignore           # Git ignore rules (node_modules, .env)
-├── package.json         # Project metadata and dependencies
-├── server.js            # Express server & Gemini API proxy
-└── README.md            # Project documentation
+### `GET /api/health`
+Returns live server and runtime health diagnostics.
+```json
+{
+  "status": "healthy",
+  "app": "Samaira Mental Health Coach",
+  "uptime": 42,
+  "model": "gemini-2.5-flash",
+  "timestamp": "2026-10-30T17:35:00.000Z"
+}
 ```
 
+### `POST /api/chat`
+Proxies chat history to Gemini with therapeutic system instructions.
+- **Request Body**:
+  ```json
+  {
+    "chatHistory": [
+      {
+        "role": "user",
+        "parts": [{ "text": "I'm feeling very overwhelmed today." }]
+      }
+    ]
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "reply": "I hear how heavy things feel right now. Let's take a slow breath together..."
+  }
+  ```
+
 ---
 
-## 🔒 Security & Privacy
+## 🆘 Immediate Crisis Resources
 
-- The API Key is securely stored in `.env` and kept server-side to prevent leakage to client browsers.
-- `.env` and `node_modules` are excluded from version control via `.gitignore`.
+If you or someone you care about is experiencing suicidal thoughts or severe psychological distress, please connect with trained human counselors:
+
+- **India**: 
+  - **Tele-MANAS**: `14416` or `1800-891-4416` (24x7, Toll-Free)
+  - **Vandrevala Foundation**: `+91 9999 666 555`
+  - **AASRA**: `+91 98204 66726`
+- **United States & Canada**:
+  - **Suicide & Crisis Lifeline**: Dial or text `988`
+- **United Kingdom**:
+  - **Samaritans**: `116 123`
+  - **NHS Mental Health**: `111`
+- **International**:
+  - Find your national emergency support at [findahelpline.com](https://findahelpline.com)
 
 ---
 
 ## 📄 License
 
-This project is licensed under the ISC License.
+This project is open-source and available under the [ISC License](LICENSE).
