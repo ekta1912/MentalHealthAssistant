@@ -96,6 +96,28 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    const chipButtons = document.querySelectorAll('.chip-btn');
+    chipButtons.forEach(button => {
+        button.addEventListener('click', async () => {
+            const prompt = button.getAttribute('data-prompt');
+            if (!prompt) return;
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+
+            if (startBtn) startBtn.disabled = true;
+            if (sendBtn) sendBtn.disabled = true;
+
+            chatDisplay.innerHTML += `<br><br><b>You:</b> "${prompt}"`;
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
+
+            await callGemini(prompt);
+
+            if (sendBtn) sendBtn.disabled = false;
+        });
+    });
+
     r.onerror = function(event) {
         console.error("🎤 Mic Error:", event.error); 
         resetUI();
