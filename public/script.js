@@ -30,21 +30,26 @@ document.addEventListener("DOMContentLoaded", () => {
     if(startBtn) {
         startBtn.addEventListener('click', () => {
             try {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                }
                 r.start();
                 startBtn.innerText = "Listening deeply...";
                 startBtn.style.backgroundColor = "#2E86AB"; // Calming blue
                 startBtn.disabled = true;
             } catch(e) {
                 console.error(e);
+                resetUI();
             }
         });
     }
+
     r.onerror = function(event) {
-        // Yeh line terminal/console me asli problem batayegi
         console.error("🎤 Mic Error:", event.error); 
-        
         resetUI();
-        chatDisplay.innerHTML += `<br><br><b>Samaire:</b> <i>"I didn't quite catch that. Take your time, I'm still here."</i>`;
+        if (event.error !== 'no-speech' && event.error !== 'aborted') {
+            chatDisplay.innerHTML += `<br><br><b>Samaira:</b> <i>"I didn't quite catch that. Take your time, I'm still here."</i>`;
+        }
     };
 
     r.onresult = async function (event) {
@@ -52,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chatDisplay.innerHTML += `<br><br><b>You:</b> "${transcript}"`;
         startBtn.innerText = "Processing...";
         startBtn.style.backgroundColor = "#4A90E2";
+        startBtn.disabled = true;
         
         await callGemini(transcript);
     };
@@ -76,28 +82,34 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (!response.ok) {
-                throw new Error("Server connection failed");
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || `Server connection failed (${response.status})`);
             }
 
             const data = await response.json();
             const samairaReply = data.reply;
             
-            chatDisplay.innerHTML += `<br><br><b>Samaire:</b> <i>"${samairaReply}"</i>`;
+            chatDisplay.innerHTML += `<br><br><b>Samaira:</b> <i>"${samairaReply}"</i>`;
 
             chatHistory.push({
                 "role": "model",
                 "parts": [{ "text": samairaReply }]
             });
 
-            // Keep memory slightly longer for better therapy context
-            if (chatHistory.length > 12) chatHistory = chatHistory.slice(-12);
+            // Keep memory bounded, always ensuring first turn starts with user
+            if (chatHistory.length > 12) {
+                chatHistory = chatHistory.slice(-12);
+                if (chatHistory.length > 0 && chatHistory[0].role === "model") {
+                    chatHistory.shift();
+                }
+            }
 
             speak(samairaReply);
 
         } catch (error) {
             console.error("Chat Error:", error);
-            const errorMsg = "I'm sorry, my connection dropped for a moment. Just breathe, I'm getting back online.";
-            chatDisplay.innerHTML += `<br><br><b>Samaire:</b> <i>"${errorMsg}"</i>`;
+            const errorMsg = "I had a momentary glitch reaching the server. Please try speaking once more.";
+            chatDisplay.innerHTML += `<br><br><b>Samaira:</b> <i>"${errorMsg}"</i>`;
             speak(errorMsg);
             
             if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1].role === "user") {
@@ -109,8 +121,11 @@ document.addEventListener("DOMContentLoaded", () => {
     function speak(text) {
         if (!('speechSynthesis' in window)) return resetUI();
 
+        // Clear any previous or stalled utterances to prevent audio playback freezing in Chrome/Edge
+        window.speechSynthesis.cancel();
+
         const spokenText = text
-            .replace(/[*_~]/g, '') 
+            .replace(/[*_~`#]/g, '') 
             .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '') 
             .replace(/\(.*?\)/g, ''); 
 
@@ -118,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // THERAPEUTIC VOICE SETTINGS: Lower pitch, slower rate for a calming effect
         utterance.pitch = 1.0;  
-        utterance.rate = 0.85;  
+        utterance.rate = 0.88;  
 
         const voiceRankings = [
             "Microsoft Aria Online",    
@@ -149,7 +164,8 @@ document.addEventListener("DOMContentLoaded", () => {
             resetUI();
         };
 
-        utterance.onerror = () => {
+        utterance.onerror = (e) => {
+            console.error("SpeechSynthesis error:", e);
             resetUI();
         };
 
@@ -158,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function resetUI() {
         if(startBtn) {
-            startBtn.innerText = "Speak to Samaire";
+            startBtn.innerText = "Speak to Samaira";
             startBtn.style.backgroundColor = "#4A90E2"; // Soothing blue
             startBtn.disabled = false;
         }

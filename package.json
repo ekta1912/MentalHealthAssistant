@@ -1,7 +1,7 @@
 {
-  "name": "samaira_2.0",
+  "name": "samaira-mental-health-coach",
   "version": "1.0.0",
-  "description": "",
+  "description": "Voice-enabled empathetic AI companion for mental health and emotional wellness",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

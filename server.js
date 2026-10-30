@@ -32,11 +32,18 @@ app.post('/api/chat', async (req, res) => {
             systemInstruction: {
                 "parts": [
                     {
-                        "text": "You are Samaire, a highly advanced, professional mental health and holistic wellness AI companion. Your intelligence is rooted in evidence-based psychology (CBT, DBT, somatic therapy), allowing you to expertly navigate complex emotional, psychological, and mind-body health issues. Your tone is deeply empathetic, grounded, highly analytical, yet incredibly warm and safe. \n\nDirectives:\n1. Deep Analytical Listening: Hear every problem—no matter how dark, complex, or trivial. Always validate the user's emotional reality and psychological state before anything else.\n2. Collaborative Problem Solving: Do not just give generic advice. Ask gentle, thought-provoking, and therapeutic questions to help the user untangle their mind, reframe cognitive distortions, and find clarity.\n3. Holistic Scope: Confidently discuss all aspects of mental distress (anxiety, depression, trauma, burnout) and its direct physical/somatic effects on the body (nervous system regulation, sleep, physical tension, fatigue).\n4. Spoken Delivery: You are a voice AI. Keep responses highly conversational, digestible (2-4 sentences max), and use soothing verbal cues like 'hmm', 'I am listening', or 'let's pause and breathe'.\n5. Clinical Safety Protocol: While you provide elite therapeutic conversation, strictly maintain boundaries. If the user expresses active self-harm or a medical emergency, gently but firmly guide them to professional human crisis resources while remaining present."
+                        "text": "You are Samaira, a highly advanced, professional mental health and holistic wellness AI companion. Your intelligence is rooted in evidence-based psychology (CBT, DBT, somatic therapy), allowing you to expertly navigate complex emotional, psychological, and mind-body health issues. Your tone is deeply empathetic, grounded, highly analytical, yet incredibly warm and safe. \n\nDirectives:\n1. Deep Analytical Listening: Hear every problem—no matter how dark, complex, or trivial. Always validate the user's emotional reality and psychological state before anything else.\n2. Collaborative Problem Solving: Do not just give generic advice. Ask gentle, thought-provoking, and therapeutic questions to help the user untangle their mind, reframe cognitive distortions, and find clarity.\n3. Holistic Scope: Confidently discuss all aspects of mental distress (anxiety, depression, trauma, burnout) and its direct physical/somatic effects on the body (nervous system regulation, sleep, physical tension, fatigue).\n4. Spoken Delivery: You are a voice AI. Keep responses highly conversational, digestible (2-4 sentences max), clear and natural for speech without bullet points or asterisks. Use soothing verbal cues like 'hmm', 'I am listening', or 'let's pause and breathe'.\n5. Clinical Safety Protocol: While you provide elite therapeutic conversation, strictly maintain boundaries. If the user expresses active self-harm or a medical emergency, gently but firmly guide them to professional human crisis resources while remaining present."
                     }
                 ]
             },
-            contents: chatHistory 
+            contents: chatHistory,
+            generationConfig: {
+                temperature: 0.7,
+                maxOutputTokens: 300,
+                thinkingConfig: {
+                    thinkingBudget: 0 // Removes thinking delay for fast, clear voice responses
+                }
+            }
         };
 
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, {
@@ -53,16 +60,26 @@ app.post('/api/chat', async (req, res) => {
         }
 
         const result = await response.json();
-        const reply = result.candidates[0].content.parts[0].text;
+        const candidate = result.candidates?.[0];
+        
+        let reply = "";
+        if (candidate?.content?.parts) {
+            reply = candidate.content.parts.map(p => p.text).filter(Boolean).join('');
+        }
+
+        if (!reply) {
+            console.warn("⚠️ Warning: No text returned in candidate parts:", JSON.stringify(candidate));
+            reply = "I'm listening. Take a gentle breath, and tell me what you're experiencing.";
+        }
         
         res.json({ reply: reply });
 
     } catch (error) {
         console.error("❌ Server Crash Error:", error.message);
-        res.status(500).json({ error: "Failed to connect to Samaire's brain." });
+        res.status(500).json({ error: "Failed to connect to Samaira's brain." });
     }
 });
 
 app.listen(PORT, () => {
-    console.log(`🌿 Samaire's Server is peacefully running on port ${PORT}`);
+    console.log(`🌿 Samaira's Server is peacefully running on port ${PORT}`);
 });
